@@ -8,53 +8,60 @@ class WeirdShop {
     }
 
     void updateQuality() {
-        for (int i = 0; i < items.length; i++) {
-            if (!items[i].name.equals("Aged Brie")
-                    && !items[i].name.equals("Backstage Pass")) {
-                if (items[i].quality > 0) {
-                    if (!items[i].name.equals("Gold Coin")) {
-                        items[i].quality = items[i].quality - 1;
-                    }
+        for (Item item : items) {
+            String name = item.name;
+            int quality = item.quality;
+            int sellIn = item.sellIn;
+
+            if (!name.equals("Aged Brie") && !name.equals("Backstage Pass")) {
+                if (quality > 0 && !name.equals("Gold Coin")) {
+                    item.quality -= 1;
                 }
             } else {
-                if (items[i].quality < 50) {
-                    items[i].quality = items[i].quality + 1;
+                managePassesAndBrie(item);
+            }
 
-                    if (items[i].name.equals("Backstage Pass")) {
-                        if (items[i].sellIn < 12) {
-                            if (items[i].quality < 50) {
-                                items[i].quality = items[i].quality + 1;
-                            }
-                        }
+            if (!name.equals("Gold Coin")) {
+                item.sellIn -= 1;
+            }
 
-                        if (items[i].sellIn < 7) {
-                            if (items[i].quality < 50) {
-                                items[i].quality = items[i].quality + 1;
-                            }
-                        }
-                    }
+            if (item.sellIn < 0) {
+                negativeSellIn(item);
+            }
+        }
+    }
+
+    public void negativeSellIn(Item item) {
+
+        switch (item.name) {
+            case "Aged Brie":
+                if (item.quality < 50) {
+                    item.quality++;
                 }
-            }
+                break;
+            case "Backstage Pass":
+                item.quality = 0;
+                break;
+            case "Gold Coin":
+                break;
+            default:
+                if (item.quality > 0) {
+                    item.quality --;
+                }
+        }
+    }
 
-            if (!items[i].name.equals("Gold Coin")) {
-                items[i].sellIn = items[i].sellIn - 1;
-            }
+    public void managePassesAndBrie(Item item) {
+        if (item.quality < 50) {
+            item.quality += 1;
 
-            if (items[i].sellIn < 0) {
-                if (!items[i].name.equals("Aged Brie")) {
-                    if (!items[i].name.equals("Backstage Pass")) {
-                        if (items[i].quality > 0) {
-                            if (!items[i].name.equals("Gold Coin")) {
-                                items[i].quality = items[i].quality - 1;
-                            }
-                        }
-                    } else {
-                        items[i].quality = items[i].quality - items[i].quality;
-                    }
-                } else {
-                    if (items[i].quality < 50) {
-                        items[i].quality = items[i].quality + 1;
-                    }
+            if (item.name.equals("Backstage Pass")) {
+                if (item.sellIn < 12) {
+                    item.quality += 1;
+                }
+
+                if (item.sellIn < 7) {
+                    item.quality += 1;
                 }
             }
         }
